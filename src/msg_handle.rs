@@ -1,0 +1,2 @@
+struct MsgHandle {}
+impl MsgHandle {}
