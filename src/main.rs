@@ -1,4 +1,5 @@
 mod frame_decoder;
+mod loggers;
 mod msg_handle;
 mod proto;
 
@@ -10,12 +11,13 @@ use tokio::net::{TcpListener, TcpStream};
 
 use frame_decoder::FrameDecoder;
 
+use loggers::Loggers;
 use proto::cmd::Cmd;
 use proto::pb::{CLogin, SLogin};
 
 // use uuid::Uuid;
 
-const MAX_BYTE_LENGTH :u32 = 128;
+const MAX_BYTE_LENGTH: u32 = 128;
 // const MAX_BYTE_LENGTH: u32 = 10;
 
 struct Connect {
@@ -43,28 +45,30 @@ impl Connect {
                     Ok(buf) => match buf{
                         Some(buf) => buf,
                         None => {
-                            println!("?????????????? decode error 不够长 {} ",n);
+                            Loggers::new().debug("?????????????? decode error 不够长 {} ",n);
                             return true;
                         }
                     },
                     Err(_) => {
-                        // println!("decode error:{}", err);
-                        println!("decode error 不2@33够长 {} ",n);
+                        // Loggers::new().debug("decode error:{}", err);
+                        Loggers::new().debug("decode error 不2@33够长 {} ",n);
                         return false;
                     }
                 };
                 */
-                let bufs = match self.frame_decoder.Decode(&buf) {
+                let bufs = match self.frame_decoder.decode_form_byte_to_vec(&buf) {
                     Some(bufs) => bufs,
                     None => return true,
                 };
-                println!("========================== bufs:{}", bufs.len());
+
+                Loggers::new()
+                    .debug(format!("========================== bufs:{}", bufs.len()).as_str());
                 for buf in bufs {
                     //转换字符串
                     // let res = String::from_utf8(buf).unwrap();
-                    println!(
-                        "########################!000000000000000000000000000000 buf:{:?} size:{}",
-                        buf, n
+                    Loggers::new().debug(
+                        format!("########################!000000000000000000000000000000 buf:{:?} size:{}",
+                        buf, n).as_str()
                     );
                     // let peer_addr = self.tcp_stream.peer_addr().unwrap();
                     // let s = &buf[0..n];
@@ -79,17 +83,23 @@ impl Connect {
 
                     let res = String::from_utf8(buf[8 + 2..length as usize + 4].to_vec()).unwrap();
 
-                    println!("asdasdasd!!!! ");
-                    // println!("size:{},content:{}", n, res);
+                    Loggers::new().debug("asdasdasd!!!! ");
+                    // Loggers::new().debug("size:{},content:{}", n, res);
                     // buf.truncate(n)
                     // buf.truncate(n);
                     // protobuf::parse_from_bytes::<Request>(&buf[8+2..length as usize + 4]).unwrap();
 
-                    println!("size:{:?}, n:{}, length:{},type:{}", buf, n, length, types);
-                    println!("login_type:{},content :{}", login_type, res);
+                    Loggers::new().debug(
+                        format!("size:{:?}, n:{}, length:{},type:{}", buf, n, length, types)
+                            .as_str(),
+                    );
+                    Loggers::new()
+                        .debug(format!("login_type:{},content :{}", login_type, res).as_str());
 
                     let s = CLogin::decode(&buf[8..length as usize + 4]).unwrap();
-                    println!("????? login_type:{},content :{}", s.r#type, s.steam_id);
+                    Loggers::new().debug(
+                        format!("????? login_type:{},content :{}", s.r#type, s.steam_id).as_str(),
+                    );
                     let mut write_buf = Vec::new();
 
                     let login = Cmd::SLogin as u32;
@@ -109,8 +119,8 @@ impl Connect {
                     write_buf.extend_from_slice(&types);
                     write_buf.extend_from_slice(&data);
 
-                    println!("???????? data:{:?}", data);
-                    println!("???????? write_buf:{:?}", write_buf);
+                    Loggers::new().debug(format!("???????? data:{:?}", data).as_str());
+                    Loggers::new().debug(format!("???????? write_buf:{:?}", write_buf).as_str());
 
                     write_half
                         .write_buf(&mut write_buf.as_slice())
@@ -130,7 +140,7 @@ impl Connect {
                 return true;
             }
             Err(err) => {
-                println!("!!! err : {:?}", err);
+                Loggers::new().debug(format!("!!! err : {:?}", err).as_str());
                 return false;
             }
         }
@@ -141,7 +151,7 @@ impl Connect {
             loop {
                 // self.process().await;
                 if let false = self.process().await {
-                    println!("process error");
+                    Loggers::new().debug("process error");
                     break;
                 }
             }
@@ -155,17 +165,33 @@ async fn main() -> Result<(), Error> {
         参考资料
         let mut  s = vec![0u8; 20];
         let mut  buf = vec![1u8,2,3,4,5,6,7,8,9,10];
-        println!("s:{:?}",s);
+        Loggers::new().debug("s:{:?}",s);
         let buf_slice = &buf[0..4];
-        println!("buf_slice ---- :{:?}", buf_slice.len());
+        Loggers::new().debug("buf_slice ---- :{:?}", buf_slice.len());
         s[2..2 + buf_slice.len()].copy_from_slice(&buf_slice);
         // s[0..].extend_from_slice(&buf);
-        println!("s:{:?}",s);
+        Loggers::new().debug("s:{:?}",s);
         s[10..13].fill(1);
-        println!("s:{:?}",s);
+        Loggers::new().debug("s:{:?}",s);
 
         Ok(())
     */
+
+    /*
+
+        env_logger::init();
+
+        debug!("1111this is a debug {}", "message");
+        error!("this is printed by default");
+        debug!("1111this is a debug {}", "message");
+
+        if log_enabled!(Level::Info) {
+            let x = 3 * 4; // expensive computation
+            info!("the answer was: {}", x);
+    }
+    */
+
+    Loggers::init();
 
     let addr = "127.0.0.1:9530";
     // 创建一个TCP listener来监听传入连接
