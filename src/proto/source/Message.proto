@@ -1,0 +1,394 @@
+syntax = "proto3";
+package pb;
+
+option go_package = "pb/";
+
+import "Common.proto";
+//import "ErrorCode.proto";
+
+//心跳
+message G_Heart{
+
+}
+
+//测试数据
+message C_Test{
+
+  int64  in = 1;   //整型
+  bool boo = 2;    //布尔
+  string str = 3;   //字符串
+  bytes  byte = 4; //字节
+
+  repeated int64 arrInt = 5;  //整型数组
+  repeated bool arrBool = 6;  //布尔数组
+  repeated string arrString = 7; //字符串数组
+  repeated bytes arrByte = 8; //字节数组
+}
+
+//测试数据
+message S_Test{
+
+  int64  in = 1;   //整型
+  bool boo = 2;    //布尔
+  string str = 3;   //字符串
+  bytes  byte = 4; //字节
+
+  repeated int64 arrInt = 5;  //整型数组
+  repeated bool arrBool = 6;  //布尔数组
+  repeated string arrString = 7; //字符串数组
+  repeated bytes arrByte = 8; //字节数组
+}
+
+//退出
+message C_Exit{
+
+}
+
+//请求手机验证码
+message C_PhoneCode{
+  string num = 1; //手机号码
+}
+
+//下发手机验证码
+message S_PhoneCode{
+  ResCode res = 1; //结果
+}
+
+//请求注册
+message C_Register{
+  string num = 1;
+  string pw = 2;
+  string code = 3;
+}
+
+//下发注册结果
+message S_Register{
+  ResCode res = 1; //结果
+  string error = 2; // 错误信息 : 比如 账号已存在
+}
+
+message C_Login{
+   LoginType type = 1; //登录类型
+  string steamId = 2; //微信登录授权后返回的token type = LoginType.wechat 时使用
+}
+
+message S_Login{
+  LoginType type = 1; //登录类型
+  ResCode res = 2; //登录结果
+  RoleData  data = 3; //角色信息
+  string token = 4; // token 信息
+}
+
+//请求断线重连
+message C_Reconn {
+   LoginType type = 1;  //登录类型（断线重连LoginType.reconn）
+   string num = 2;   //手机号码
+   string token = 3; // token 信息
+}
+//下发断线重连
+message S_Reconn {
+  LoginType type = 1;  //登录类型（断线重连LoginType.reconn）
+  ResCode res = 2; //登录结果
+  RoleData  data = 3; //角色信息
+  string token = 4; // token 信息
+}
+
+//创建角色
+message C_CreateRole{
+  string name = 1;  //我的名字是什么？
+  int64 age = 2;  //年龄
+  int64 sex = 3;   // 1 男 0 女
+  string nature = 4; // 个性
+  repeated AttireKV attires = 5; //装扮信息
+  int64 avatar = 6; // 头像
+  string youName = 7; // 你的名字是什么？
+  string Tone = 8; // 我用什么语气和你对话？
+
+}
+
+//下发创建角色
+message S_CreateRole{
+  ResCode res = 1 ; // 结果
+  RoleData data = 3 ; //角色数据
+  string error = 2; //错误信息 比如：角色名已存在
+}
+
+//请求检查是否有重复命名
+message C_CheckReName{
+  string name = 1;//名字
+}
+
+//下发是否有重复命名结果
+message S_CheckReName{
+  bool res = 1;//是否重名
+}
+
+//更新单条属性
+message S_SyncAttr{
+  int64 roleId = 1;  //角色Id
+  AttrKV attr = 2;   //更新属性
+}
+
+//更新多条属性
+message S_SyncAttrs{
+  int64 roleId = 1;  //角色Id
+  repeated AttrKV attrs = 2;  //更新属性
+}
+
+//同步装扮
+message C_SyncAttire{
+  repeated AttireKV arrires = 1; //装扮
+}
+
+
+//下发同步装扮
+message S_SyncAttire{
+  int64 roleId = 1; //装扮
+  repeated AttireKV arrires = 2 ; //装扮
+}
+
+//请求角色数据
+message C_RoleData{
+  int64 roleId = 1; //角色id
+}
+//下发角色数据
+message S_RoleData{
+  RoleData data = 1; //角色数据
+}
+
+message C_Transform {
+    Trans trans = 1;
+}
+message S_Transform {
+    int64 roleId = 1;
+    Trans trans = 2;
+}
+
+message C_SyncAnim {
+  string anim =1;
+  Trans trans = 2;
+}
+
+message S_SyncAnim {
+  int64 userId =1;
+  string anim =2;
+  Trans trans = 3;
+}
+
+//请求进入房间
+message C_JoinRoom{
+  int64 roomId = 1; //房间id
+}
+
+//下发进入房间
+message S_JoinRoom{
+  RoleData data = 1; //角色数据
+}
+
+//请求同步房间
+message C_SyncRoom{
+  int64 roomId = 1;
+}
+
+//下发同步房间
+message S_SyncRoom{
+  repeated RoleData datas = 1;
+}
+
+//请求离开房间
+message C_LeaveRoom{
+   Trans  trans = 1;
+}
+
+//发送离开房间
+message S_LeaveRoom{
+  repeated int64 roleIds = 1;  // 离开的角色id列表
+}
+
+message C_Talk2AI{
+  string text = 1;    //文本
+}
+
+message S_Talk2AI{
+  string text = 1;    //文本
+  string error = 2;   //错误信息
+}
+
+//结束AI对话标志
+message C_EndTalk2AI{
+
+}
+
+//结束AI对话标志
+message S_EndTalk2AI{
+
+}
+
+// 上传对话的文字内容
+message C_SendAudio{
+  string uuid = 1;
+  string text =2;
+}
+
+// 返回对话的音频文件流
+message S_SendAudio{
+  string uuid = 1;
+  bytes audio = 2;
+  int64 code = 3;
+  string rec_text = 4;
+}
+
+//  发送Audio文字结束
+message C_EndSendAudio{
+  string uuid = 1;
+  string voiceType = 2;
+}
+
+//  下发结束Audio流 
+message S_EndSendAudio {
+  string uuid = 1;
+}
+
+//获取全部任务状态
+message C_Mission {
+  repeated MissionType types = 1; //请求任务类型数据
+}
+
+//下发全部任务状态
+message S_Mission {
+  repeated MissionInfo missions = 1;  //下发请求的类型任务状态
+}
+
+//同步任务状态
+message C_SyncMission {
+  MissionType type = 1; //任务类型
+  int64 id = 2;  // 任务id
+  bool state = 3; //任务状态 true = 完成 ，false = 未完成
+}
+
+//任务状态
+message S_SyncMission {
+  MissionType type = 1; //任务类型
+  int64 id = 2;  // 任务id
+  bool state = 3; //任务状态 true = 完成 ，false = 未完成
+  repeated RewardKV rewards = 4; //奖励
+}
+
+//进入睡眠模式
+message C_Sleep {
+  int64 hour = 1 ; //用户设置的睡眠时间(小时整)
+}
+
+//校准剩余时间
+message S_Sleep {
+  int64 hour = 1 ; //当 收到 C_Sleep 协议的时候 返回 C_Sleep.time 进行校准
+}
+
+//请求剩余睡眠时间
+message C_RemainTime2Sleep {
+  int64 roleId = 1; //角色ID
+}
+
+//下发剩余睡眠时间
+message S_RemainTime2Sleep {
+  int64 seconds = 1;  //获取剩余秒数
+  int64 totalTime = 2; //总共时间 
+}
+
+//请求背包数据
+message C_BagData{
+  PropType type = 1; //道具类型
+}
+
+//下发背包数据
+message S_BagData{
+  Bag data = 1;//返回背包数据
+}
+
+//同步背包道具
+message C_SyncBagProp{
+  PropType type = 1; //道具类型
+  int64 id = 2; //道具id
+  int64 count = 3; //道具数量，正数为添加道具，负数为消耗道具
+}
+
+
+//下发背包道具
+message S_SyncBagProp{
+  PropType type = 1; //道具类型
+  int64 id = 2; //道具id
+  int64 count = 3; //道具数量
+}
+
+//请求商店数据
+message C_ShopData{
+  SellType type = 1;//发送商店标签类型
+}
+
+//下发商店数据
+message S_ShopData{
+  Shop data = 1;//返回商店数据
+}
+
+//同步商店商品
+message C_BuyProp{
+  SellType sellType = 1;//商品类型
+  PropType propType = 2;//道具类型
+  int64 propId = 3;//道具id
+  int64 count = 4;//购买该道具的数量
+}
+
+//下发商店商品
+message S_BuyProp{
+  Sell data = 1;
+}
+
+
+
+// 发送积分
+message C_SendScore  {
+  gameType types  = 1;
+  int64 score = 2;
+}
+
+// 下发积分
+message S_SendScore{
+  int64 code = 1;
+  string msg = 2;
+  int64 highestScore = 3;
+}
+
+// 请求获取排行榜列表
+message C_ScoreList {
+    gameType types = 1;
+    gameModel model = 2;
+}
+
+// 下发排行榜列表
+message S_ScoreList {
+    int64 code  = 1;
+    string msg = 2;
+    repeated UserScoreMessage userScoreMessage = 3; // 用户信息
+}
+
+// 请求猜谜
+message C_Riddle{}
+
+// 下发猜谜
+message S_Riddle{
+  int64 code = 1;
+  string msg = 2;
+  Riddles riddle = 3;   
+}
+
+// 请求首次请求AI
+message C_FirstAITAlK{}
+
+// 请求唤醒
+message C_SleepUp{}
+
+// 下发唤醒
+message S_SleepUp{
+  int64 code = 1;
+  string msg = 2;
+}

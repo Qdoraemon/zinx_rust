@@ -1,0 +1,114 @@
+syntax = "proto3";
+package cmd;
+
+option go_package = "pb/";
+
+//基础后台口令（口号、协议号、协议id）：
+//G表示双端共用，
+//C表示前端向后台请求，
+//S表示后端反馈给前端,
+//*SS表示后台服务器之间的口令（不需要生成给前端）
+
+//注意：因导出规则约定，枚举值注释说明要求全写在值的后面（不要单独起一行）
+
+
+
+
+enum CMD{
+  NONE = 0;//未知
+
+  G_Heart = 1;//心跳 n秒 调用一次 (前端要比后端短些)
+  C_Exit = 2 ; //退出
+
+  C_Test =3; //发送测试协议
+  S_Test =4; //下发测试协议
+
+  C_IDCard = 104; //请求实名认证
+  S_IDCard = 105; //下发实名认证
+
+  C_Login = 106;  //请求登录
+  S_Login = 107;  //下发登录
+
+  C_Reconn = 108; //请求重新链接
+  S_Reconn = 109; //下发重新链接
+
+  C_CreateRole = 200; //请求创建角色
+  S_CreateRole = 201; //下发创建角色
+
+  C_CheckReName = 202;//检查是否有重名
+  S_CheckReName = 203;//下发是否有重名
+
+  C_JoinRoom = 300; //请求加入房间
+  S_JoinRoom = 301; //下发加入房间
+
+  C_SyncRoom = 302; //请求同步房间 (请求房间内玩家可显示玩家)
+  S_SyncRoom = 303; //下发同步房间 (下发房间内全部玩家，注意：只下发九宫格内的玩家)
+
+  C_LeaveRoom = 304; //请求离开房间
+  S_LeaveRoom = 305; //下发离开房间
+
+  C_Mission = 500;   //请求任务
+  S_Mission = 501;   //下发任务
+
+  C_SyncMission = 502; //请求同步任务
+  S_SyncMission = 503; //下发同步任务
+
+  C_Sleep = 600;  //发送睡眠模式
+  S_Sleep = 601;  //下发睡眠模式
+  C_RemainTime2Sleep = 602; //请求睡眠剩余时间
+  S_RemainTime2Sleep = 603; //下发睡眠剩余时间
+
+
+  C_RoleData = 1000; //请求角色信息
+  S_RoleData = 1001; //下发角色信息
+
+  S_SyncAttr = 1002;  //同步单挑属性
+  S_SyncAttrs =1003;  //同步多条属性
+
+  C_SyncAttire =1004; //发送同步装扮
+  S_SyncAttire =1005; //下发同步装扮
+
+  C_Transform = 1006; //发送变换信息
+  S_Transform = 1007; //下发变换信息
+  
+  C_SyncAnim = 1008; //发送同步动作
+  S_SyncAnim = 1009; //下发同步动作
+
+  C_BagData = 1100;//请求背包数据
+  S_BagData = 1101;//下发背包数据
+
+  C_SyncBagProp = 1102;//同步背包道具
+  S_SyncBagProp = 1103;//下发同步背包道具
+
+  C_ShopData = 1200;//请求商店数据
+  S_ShopData = 1201;//下发商店数据
+
+  C_BuyProp = 1202;//同步商店商品
+  S_BuyProp = 1203;//下发同步商店商品
+
+  C_Talk2AI = 2000; //发送与AI对话
+  S_Talk2AI = 2001; //下发与AI对面
+
+  C_EndTalk2AI = 2002; //发送结束AI对话
+  S_EndTalk2AI = 2003; //下发结束AI对面
+
+
+
+  C_SendAudio = 2004; // 发送Audio文字
+  S_SendAudio = 2005; // 下发Audio流
+
+  C_EndSendAudio = 2006; //  发送Audio文字结束
+  S_EndSendAudio = 2007; //  下发结束Audio流
+
+  C_SendScore = 2008; // 发送分数
+  S_SendScore = 2009; // 下发获取分数结果
+  C_ScoreList = 2010; // 请求分数列表
+  S_ScoreList = 2011; // 下发分数列表
+
+  C_Riddle = 2012; // 请求谜语游戏
+  S_Riddle = 2013; // 下发谜语游戏
+
+  C_FirstAITAlK = 2014; // 首次请求AI对话
+  C_SleepUp = 2015; // 唤醒睡眠状态
+  S_SleepUp = 2016; // 下发睡眠状态
+}

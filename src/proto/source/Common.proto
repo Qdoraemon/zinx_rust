@@ -1,0 +1,213 @@
+syntax = "proto3";
+package pb;
+
+option go_package = "pb/";
+/// 共享单元数据，属性项等
+
+
+//结果属性码表
+enum ResCode{
+  succ = 0; //成功
+  fail = 1; //失败
+}
+
+enum LoginType{
+  steamId = 0; // steamId登录
+
+}
+
+
+//数值类属性码表(key-code)
+enum AttrCode {
+  none = 0;          //未知
+  roleId = 1;                 //角色id
+  roomId = 2;                 //房间id
+  sex = 3;                    //性别
+  ery = 4;                    //能量
+  exp = 5;                    //经验
+  lv = 6;                     //等级
+  state = 7;                  //状态 0=正常 ，1 = 睡眠
+  eryLimit = 8;               //能量上限
+}
+
+//装扮值类型属性码表
+enum AttireCode{
+  hair = 0; //头发
+  eye = 1;  //眼睛
+  face = 2; //面型
+  cloth = 3; //上装
+  pant = 4; //下装
+  shoes = 5; //鞋子
+}
+
+//任务类型，暂时只有每日任务
+enum MissionType {
+  d2d = 0; //每日任务
+  main = 1;//主线任务
+  branch = 2;//支线任务
+  activity = 3;//活动任务
+}
+
+//道具类型
+enum PropType{
+  food = 0; //食物
+  ingredients = 1;//食材
+  tool = 2; //工具
+  daily = 3;  //日常用品
+  pet = 4;//宠物用品
+  plant = 5;//种植物
+  decoration = 6;//装饰物
+  collection = 7;//收藏品
+  mission = 8;//任务道具
+  shop = 9;//商店道具（仅商店出售）
+}
+
+//商品类型
+enum SellType{
+  dailyProp = 0;//每日道具
+  limitProp = 1;//限时道具
+  normalProp = 2;//道具
+  goldConvert = 3;//金币兑换
+  vipProp = 4;//VIP/月卡/免广等商品道具
+}
+
+//货币类型
+enum MoneyType{
+  mon_gold = 0;//金币
+  mon_ticket = 1;//点券
+  mon_RMB = 2;//人民币
+  mon_HKD = 3;//港元
+  mon_NTD = 4;//新台币
+  mon_USD = 5;//美元
+}
+
+enum UseType{
+  use_normal = 0;//普通道具，会存进背包
+  use_ener = 1;//直接使用能量点
+  use_gold = 2;//直接使用金币
+  use_vip = 3;//直接使用月卡
+}
+
+message RewardKV {
+  int64 id = 1; //奖励类型id
+  string val = 2; //奖励内容
+}
+
+//数值属性键值列表
+message AttrKV{
+  AttrCode code = 1;//属性code
+  int64 val = 2;//属性value
+}
+
+//装扮数值属性键值列表
+message  AttireKV{
+  AttireCode code = 1;
+  int64 val = 2;
+}
+
+
+//位置
+message Position{
+  int64 x = 1; //x轴
+  int64 y = 2; //y轴
+  int64 z = 3; //z轴
+}
+
+//Y轴旋转角度
+message Rotation{
+  int64 y = 1; //角度
+}
+
+
+message Scale{
+  int64 x = 1; //x轴
+  int64 y = 2; //y轴
+  int64 z = 3; //z轴
+}
+
+//语言信息
+message Voice{
+  int64 timbre = 1; // 音色
+}
+
+message MissionInfo {
+  MissionType type = 1; //任务类型
+  int64 id = 2;//任务id
+  bool state = 3;//任务状态 true = 完成， false = 未完成
+}
+
+
+message Trans {
+  Position pos =1; //位置
+  Rotation  rot = 2; //角度
+  Scale scale = 3; //大小
+  bool isTeleport = 4; //是否瞬移
+}
+
+//角色数据
+message RoleData{
+  string name = 1; //名字
+  bool exist = 2;  //是否角色
+  repeated AttrKV attrs = 3; //属性信息
+  repeated AttireKV attires = 4; //装扮数据
+  Trans trans = 5;  //变换信息
+  int64 Avatar =6 ;// 头像
+}
+
+//道具信息
+message PropInfo{
+  PropType type = 1;
+  int64 id = 2; //物品id
+  int64 count = 3;  //物品数量
+  UseType useType = 4;//使用类型
+  int64 price = 5;//价格
+}
+
+//背包数据
+message Bag{
+  repeated PropInfo info = 1;
+}
+
+//商品信息
+message CommodityInfo{
+  MoneyType moneyType = 1;//货币种类
+  PropInfo prop = 2;//道具信息
+}
+
+//商店数据
+message Shop{
+  repeated CommodityInfo info = 1;
+}
+
+message Sell{
+  SellType type = 1;
+  repeated CommodityInfo info = 2;
+}
+
+
+
+
+// 游戏类型
+enum gameType{
+  WhacAMole = 0; // 打地鼠
+  Riddle = 1; // 猜谜
+}
+
+// 排行榜类型
+enum gameModel {
+  Highest = 0; // 最高
+  History = 1; // 历史
+}
+// 猜谜
+message Riddles {
+  string question = 1;
+  repeated string options = 2;
+  string answer = 3;
+}
+
+//装扮数值属性键值列表
+message  UserScoreMessage{
+  string  name = 1;
+  int64   sex = 2;
+  int64  score = 3;
+}
