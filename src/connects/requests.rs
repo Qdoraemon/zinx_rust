@@ -1,5 +1,5 @@
 use crate::Connect;// Request 请求
-use crate::message::Message;// 请求数据
+use crate::connects::message::Message;// 请求数据
 
 pub struct Request <'a> {
 	pub conn    :&'a mut Connect ,    // the connection which has been established with the client(已经和客户端建立好的链接)

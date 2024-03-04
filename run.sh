@@ -1,3 +1,3 @@
 #! /bin/bash
 
-RUST_LOG=debug cargo run 
+RUST_LOG=release cargo run --release
