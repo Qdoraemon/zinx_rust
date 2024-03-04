@@ -17,19 +17,19 @@ impl Message {
     pub fn set_data_len(&mut self, len: u32) {
         self.data_len = len;
     }
-    pub fn get_data_len(&self) -> u32 {
+    pub fn _get_data_len(&self) -> u32 {
         self.data_len
     }
     pub fn set_data(&mut self, data: Vec<u8>) {
         self.data = data;
     }
-    pub fn get_data(&self) -> &Vec<u8> {
+    pub fn _get_data(&self) -> &Vec<u8> {
         &self.data
     }
-    pub fn set_raw_data(&mut self, data: Vec<u8>) {
+    pub fn _set_raw_data(&mut self, data: Vec<u8>) {
         self.raw_data = data;
     }
-    pub fn get_raw_data(&self) -> &Vec<u8> {
+    pub fn _get_raw_data(&self) -> &Vec<u8> {
         &self.raw_data
     }
 
