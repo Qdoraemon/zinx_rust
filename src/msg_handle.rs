@@ -1,9 +1,8 @@
 use crate::ltvdecoder_little::LtvLittleDecoder;
 use crate::requests::Request;
-use crate::router::Router;
+use crate::router::{Router,RouterResult};
 use anyhow:: Result;
 use std::collections::HashMap;
-use std::usize;
 use tokio::io::AsyncWriteExt;
 use tokio::sync::Mutex;
 use crate::loggers::Loggers;
@@ -47,29 +46,35 @@ impl MsgHandle {
     pub async fn call(&mut self, request: &mut Request<'_>) -> Result<()> {
         if let Some(api) = self.apis.lock().await.get(&request.msg.get_id()) {
             match api.route(request) {
-                Ok(message) => {
-                    // request.conn (message).await;
-                    let (_, mut write_half) = request.conn.tcp_stream.split();
-                    match write_half.write_buf(&mut message.as_slice()).await {
-                        Ok(n) => {
-                            Loggers::new().debug(format!("execute success write size:{}",n).as_str());
+                Ok(result) =>  match result{
+                    RouterResult::Send(message) =>{
+                        let (_, mut write_half) = request.conn.tcp_stream.split();
+                        match write_half.write_buf(&mut message.as_slice()).await {
+                            Ok(n) => {
+                                Loggers::new().debug(format!("call success write size:{}",n).as_str());
+                            }
+                            Err(e) => {
+                                Loggers::new().warn(format!("call error :{}",e).as_str());
+                                return Err(e.into());
+                            }
                         }
-                        Err(e) => {
-                            Loggers::new().warn(format!("execute error :{}",e).as_str());
-                            return Err(e.into());
+    
+                        match write_half.flush().await{
+                            Ok(_) => {
+                                Loggers::new().debug(format!("call success flush").as_str());
+                            }
+                            Err(e) => {
+                                Loggers::new().warn(format!("call error :{}",e).as_str());
+                                return Err(e.into());
+                            }
                         }
-                    }
+                        return Ok(());
+                    },
+                    RouterResult::OK =>{
+                        Loggers::new().debug(format!("call ok.... ").as_str());
+                        return Ok(());
+                    },
 
-                    match write_half.flush().await{
-                        Ok(_) => {
-                            Loggers::new().debug(format!("execute success flush").as_str());
-                        }
-                        Err(e) => {
-                            Loggers::new().warn(format!("execute error :{}",e).as_str());
-                            return Err(e.into());
-                        }
-                    }
-                    return Ok(());
                 }
                 Err(er) => {
                     println!("-------!!!!!!?>>>>>>>>>>>>>>>>>>>{}", er);

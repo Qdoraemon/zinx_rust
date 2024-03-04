@@ -7,9 +7,9 @@ edition = "2021"
 
 [dependencies]
 tokio = { version = "1", features = ["full"] }
-protobuf = "3.3.0"
-protobuf-codegen = "3.3.0"
-protoc-gen-prost = "0.3.1"
+# protobuf = "3.3.0"
+# protobuf-codegen = "3.3.0"
+# protoc-gen-prost = "0.3.1"
 prost = "*"
 log = "0.4.20"
 env_logger = "0.11.2"

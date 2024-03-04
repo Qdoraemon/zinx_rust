@@ -18,7 +18,7 @@ use proto::cmd::Cmd;
 use proto::pb::{CLogin, SLogin};
 
 use requests::Request;
-use router::Router;
+use router::{Router,RouterResult};
 use connect::Connect;
 use std::sync::Arc;
 use tokio::sync::Mutex;
@@ -40,7 +40,7 @@ impl Login {
 }
 impl Router for Login {
     
-    fn route(&self, request: &mut Request) -> anyhow::Result<Vec<u8>>{
+    fn route(&self, request: &mut Request) -> anyhow::Result<RouterResult>{
 
         Loggers::new().debug(
             format!("1222222222222222222222222size:????? ")
@@ -69,8 +69,8 @@ impl Router for Login {
         Loggers::new().debug(format!("???????? data:{:?}", data).as_str());
         Loggers::new().debug(format!("???????? write_buf:{:?}", write_buf).as_str());
        
-       
-        anyhow::Ok(write_buf.to_vec())
+        let result = RouterResult::Send(write_buf.to_vec());
+        anyhow::Ok(result)
     }
 }
 

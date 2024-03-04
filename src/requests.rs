@@ -1,8 +1,5 @@
 use crate::Connect;// Request 请求
 use crate::message::Message;// 请求数据
-use std::sync::{Arc, Weak};
-use tokio::sync::Mutex;
-use std::rc::Rc;
 
 pub struct Request <'a> {
 	pub conn    :&'a mut Connect ,    // the connection which has been established with the client(已经和客户端建立好的链接)
@@ -16,7 +13,7 @@ impl <'a> Request<'a> {
         // let conn =  Arc::clone(&conn);
         Request{  conn, msg}
     }
-    pub fn bing_router(&self)  {
+    pub fn _bing_router(&self)  {
         
     }
 }
