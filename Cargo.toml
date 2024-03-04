@@ -13,8 +13,9 @@ protoc-gen-prost = "0.3.1"
 prost = "*"
 log = "0.4.20"
 env_logger = "0.11.2"
+anyhow = "1.0.80"
 
 [features]
-default = ["test"]
+default = ["release"]
 test = []
 release = []
