@@ -70,7 +70,19 @@ impl Router for Login {
     }
 }
 
+struct HeartBeat {}
+impl HeartBeat {
+    fn new() -> Self {
+        Self{}
+    }
+}
 
+impl Router for HeartBeat {
+    fn route(&self,request:&mut  Request) -> anyhow::Result<RouterResult> {
+        Loggers::new().debug(format!("heard").as_str());
+        anyhow::Ok(RouterResult::OK)
+    }
+}
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {
@@ -86,12 +98,14 @@ async fn main() -> Result<(), Error> {
     };
     // TODO :暂时没有用不上
     let msg_handler = Arc::new(Mutex::new(MsgHandle::new()));
-    let login_box = Box::new(Login::new());
-    msg_handler.lock().await.add_api(Cmd::CLogin as u32,login_box).await;
-
+    msg_handler.lock().await.add_api(Cmd::GHeart as u32,Box::new(HeartBeat::new())).await;
+    msg_handler.lock().await.add_api(Cmd::CLogin as u32,Box::new(Login::new())).await;
+   
     loop {
         let (stream, _) = listener.accept().await?;
-        let conn = Connect::new( stream);
+        let stream = Arc::new(Mutex::new(stream));
+        let mut conn = Connect::new( stream).await;
+        
         conn.start(msg_handler.clone()).await;
     }
 }

@@ -48,7 +48,13 @@ impl MsgHandle {
             match api.route(request) {
                 Ok(result) =>  match result{
                     RouterResult::Send(message) =>{
-                        let (_, mut write_half) = request.conn.tcp_stream.split();
+                        println!("12223!!!!!!!!!!!!!!!!");
+                        let tcp_stream = request.conn.send( message).await;
+                        /* 
+                        let tcp_stream = request.conn.tcp_stream.clone();
+                        let mut tcp_stream = tcp_stream.lock().await;
+                        let (_, mut write_half) = tcp_stream.split();
+                        // println!("222333333333333333333--------------------");
                         match write_half.write_buf(&mut message.as_slice()).await {
                             Ok(n) => {
                                 Loggers::new().debug(format!("call success write size:{}",n).as_str());
@@ -68,6 +74,7 @@ impl MsgHandle {
                                 return Err(e.into());
                             }
                         }
+                        */
                         return Ok(());
                     },
                     RouterResult::OK =>{

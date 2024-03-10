@@ -9,7 +9,7 @@ pub struct Request <'a> {
 
 impl <'a> Request<'a> {
     // pub fn new(conn:   Arc< &'a mut Connect>, msg:Message) ->  Request {
-    pub fn new(conn:   &'a mut Connect, msg:Message) ->  Request {
+    pub fn new(conn: &'a mut Connect, msg:Message) ->  Request<'a> {
         // let conn =  Arc::clone(&conn);
         Request{  conn, msg}
     }
