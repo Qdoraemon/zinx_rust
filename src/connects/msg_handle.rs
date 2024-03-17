@@ -1,7 +1,7 @@
 use crate:: connects::ltvdecoder_little::LtvLittleDecoder;
 use crate::connects::requests::Request;
 use crate::connects::router::{Router,RouterResult};
-use anyhow:: Result;
+use anyhow::{Error,  Result};
 use std::collections::HashMap;
 use tokio::io::AsyncWriteExt;
 use tokio::sync::Mutex;
@@ -43,38 +43,13 @@ impl MsgHandle {
         }
     }
 
-    pub async fn call(&mut self, request: &mut Request<'_>) -> Result<()> {
+    pub async fn call(&mut self, request: &mut Request<'_>) ->  core::result::Result<(),Error> {
         if let Some(api) = self.apis.lock().await.get(&request.msg.get_id()) {
             match api.route(request) {
                 Ok(result) =>  match result{
                     RouterResult::Send(message) =>{
-                        println!("12223!!!!!!!!!!!!!!!!");
-                        let tcp_stream = request.conn.send( message).await;
-                        /* 
-                        let tcp_stream = request.conn.tcp_stream.clone();
-                        let mut tcp_stream = tcp_stream.lock().await;
-                        let (_, mut write_half) = tcp_stream.split();
-                        // println!("222333333333333333333--------------------");
-                        match write_half.write_buf(&mut message.as_slice()).await {
-                            Ok(n) => {
-                                Loggers::new().debug(format!("call success write size:{}",n).as_str());
-                            }
-                            Err(e) => {
-                                Loggers::new().warn(format!("call error :{}",e).as_str());
-                                return Err(e.into());
-                            }
-                        }
-    
-                        match write_half.flush().await{
-                            Ok(_) => {
-                                Loggers::new().debug(format!("call success flush").as_str());
-                            }
-                            Err(e) => {
-                                Loggers::new().warn(format!("call error :{}",e).as_str());
-                                return Err(e.into());
-                            }
-                        }
-                        */
+                        Loggers::new().debug("12223!!!!!!!!!!!!!!!!");
+                        request.conn.send( message).await;
                         return Ok(());
                     },
                     RouterResult::OK =>{
@@ -84,10 +59,10 @@ impl MsgHandle {
 
                 }
                 Err(er) => {
-                    println!("-------!!!!!!?>>>>>>>>>>>>>>>>>>>{}", er);
+                    Loggers::new().debug(format!("-------!!!!!!?>>>>>>>>>>>>>>>>>>>{}", er).as_str());
+                    return Err(er); // 返回错误
                 }
             }
-            return Ok(());
         }
         Ok(())
     }

@@ -79,7 +79,7 @@ impl HeartBeat {
 
 impl Router for HeartBeat {
     fn route(&self,request:&mut  Request) -> anyhow::Result<RouterResult> {
-        Loggers::new().debug(format!("heard").as_str());
+        Loggers::new().debug(format!("--------------------- heard").as_str());
         anyhow::Ok(RouterResult::OK)
     }
 }
@@ -89,7 +89,7 @@ async fn main() -> Result<(), Error> {
 
     Loggers::init();
 
-    let addr = "127.0.0.1:9530";
+    let addr = "0.0.0.0:9530";
     // 创建一个TCP listener来监听传入连接
 
     let listener = match TcpListener::bind(addr).await {
@@ -100,12 +100,13 @@ async fn main() -> Result<(), Error> {
     let msg_handler = Arc::new(Mutex::new(MsgHandle::new()));
     msg_handler.lock().await.add_api(Cmd::GHeart as u32,Box::new(HeartBeat::new())).await;
     msg_handler.lock().await.add_api(Cmd::CLogin as u32,Box::new(Login::new())).await;
-   
+    let mut test_num = 1;
     loop {
         let (stream, _) = listener.accept().await?;
         let stream = Arc::new(Mutex::new(stream));
-        let mut conn = Connect::new( stream).await;
+        let conn = Connect::new( stream).await;
         
-        conn.start(msg_handler.clone()).await;
+        conn.start(msg_handler.clone(),test_num).await;
+        test_num += 1;
     }
 }

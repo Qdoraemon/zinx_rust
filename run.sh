@@ -1,3 +1,3 @@
 #! /bin/bash
 
-RUST_LOG=release cargo run --release
+RUST_LOG=warn,info cargo run --release

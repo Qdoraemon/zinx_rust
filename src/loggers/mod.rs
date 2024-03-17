@@ -21,7 +21,7 @@ impl Loggers {
     pub fn info(&self,message: &str){
         #[cfg(any ( feature ="release", feature = "test"))]
         {
-            info!("{}",message);
+            info!("{:?}",message);
         }
     }
     pub fn debug(&self,message: &str){
@@ -33,7 +33,7 @@ impl Loggers {
     pub fn warn(&self,message: &str) {
         #[cfg(any ( feature ="release", feature = "test"))]
         {
-            warn!("{}",message);
+            warn!("{:?}",message);
         }
     }
 
