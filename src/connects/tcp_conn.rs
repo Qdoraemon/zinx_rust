@@ -110,21 +110,7 @@ impl Connect {
             }
         }
     }
-    /* 
-    pub async fn close(&mut self) -> Result<(), Error> {
-        let mut tcp_stream = self.tcp_stream.lock().await;
-        match tcp_stream.shutdown().await {
-            Ok(_) => {
-                Loggers::new().debug("close ok");
-                return Ok(());
-            }
-            Err(err) => {
-                Loggers::new().debug(format!("!!! close error : {:?}", err).as_str());
-                return Err(err);
-            }
-        }
-    }
-    */
+
 
     pub async fn call_msg_handle(
         &mut self,
@@ -185,11 +171,13 @@ impl Connect {
                     }
                     Err(ref e) if e.kind() == std::io::ErrorKind::ConnectionRefused => {
                         Loggers::new().warn(format!(" tcp close !!!!====").as_str());
+                        heart_beat_time.lock().await.set_close(true);
                         return;
                     }
                     Err(err) => {
                         Loggers::new()
                             .warn(format!("tcp close !!!!==== --- !!! err : {:?}", err.to_string()).as_str());
+                        heart_beat_time.lock().await.set_close(true);
                         return;
                     }
                 }

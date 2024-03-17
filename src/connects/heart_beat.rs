@@ -13,6 +13,7 @@ pub struct HeartBeatTime {
     last_time: Instant,
     // TODO : 以后会删除掉，用于测试。
     test_num: u32,
+    is_close : bool,
 }
 impl HeartBeatTime {
     pub fn new(max_time: u64, test_num: u32) -> Self {
@@ -29,7 +30,11 @@ impl HeartBeatTime {
             max_time: max_time,
             last_time: Instant::now(),
             test_num: test_num,
+            is_close : false,
         }
+    }
+    pub fn set_close(&mut self,close :bool){
+        self.is_close = close;
     }
 
     pub fn is_time_out(&self) -> bool {
@@ -43,7 +48,7 @@ impl HeartBeatTime {
             .as_str(),
         );
 
-        if time_duration > self.max_time {
+        if time_duration > self.max_time || self.is_close == true{
             return true;
         }
         return false;
